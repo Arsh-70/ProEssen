@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Your Cart</title>
+    <style>
+        h3 {
+            text-align: center;
+        }
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            margin: 20px auto;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .price {
+            color: grey;
+            font-size: 20px;
+        }
+        .card img {
+            width: 90%;
+            border-radius: 8px;
+        }
+        .clear-btn {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h3><b>Your Cart</b></h3>
+
+    <!-- Clear Cart Button -->
+    <button class="clear-btn" onclick="clearCart()">Clear Cart</button>
+
+    <div id="cart-items"></div>
+
+    <script>
+        function getQueryParams() {
+            let params = new URLSearchParams(window.location.search);
+            return {
+                name: params.get("name"),
+                price: params.get("price"),
+                image: params.get("image"),
+            };
+        }
+
+        function saveToCart(product) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.push(product);
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+
+        function displayCartItems() {
+            let cartContainer = document.getElementById("cart-items");
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            if (cart.length === 0) {
+                cartContainer.innerHTML = "<p style='text-align:center;'>Your cart is empty.</p>";
+            } else {
+                cartContainer.innerHTML = "";
+                cart.forEach((item) => {
+                    cartContainer.innerHTML += `
+                        <div class="card">
+                            <img src="${item.image}" alt="Product Image">
+                            <h1>${item.name}</h1>
+                            <p class="price">${item.price}</p>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function clearCart() {
+            localStorage.removeItem("cart");
+            location.reload(); // Reload to update the cart
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let product = getQueryParams();
+
+            if (product.name && product.price && product.image) {
+                saveToCart(product);
+                window.location.href = "cart.html"; // Redirect to clear URL
+            } else {
+                displayCartItems();
+            }
+        });
+    </script>
+
+</body>
+</html>
